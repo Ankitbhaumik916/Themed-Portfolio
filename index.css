@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #050505;
+}
+
+/* Enhanced focus states for accessibility */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #00d9ff;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #00d9ff, #a855f7);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #06b6d4, #9333ea);
+}
+
+/* Selection styling */
+::selection {
+  background-color: #00d9ff;
+  color: #050505;
+}
+
+/* Link improvements */
+a {
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* Button improvements */
+button {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Image optimization */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Reduced opacity for better text contrast on images */
+@media (prefers-contrast: more) {
+  body {
+    letter-spacing: 0.5px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: 0.3px;
+  }
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+  html {
+    scroll-padding-top: 60px;
+  }
+
+  body {
+    font-size: 16px; /* Prevent zoom on input focus */
+  }
+}
+
