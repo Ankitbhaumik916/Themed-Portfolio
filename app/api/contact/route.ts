@@ -51,21 +51,23 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = contactSchema.parse(body);
 
-    // Save to database (optional)
-    try {
-      const client = await clientPromise;
-      const db = client.db("portfolio");
-      const collection = db.collection("messages");
+    // Save to database (optional - only if MongoDB is configured)
+    if (clientPromise) {
+      try {
+        const client = await clientPromise;
+        const db = client.db("portfolio");
+        const collection = db.collection("messages");
 
-      await collection.insertOne({
-        ...validatedData,
-        createdAt: new Date(),
-        ip,
-        read: false,
-      });
-    } catch (dbError) {
-      console.error("Database error:", dbError);
-      // Continue even if database save fails
+        await collection.insertOne({
+          ...validatedData,
+          createdAt: new Date(),
+          ip,
+          read: false,
+        });
+      } catch (dbError) {
+        console.error("Database error:", dbError);
+        // Continue even if database save fails
+      }
     }
 
     // Send email notification
