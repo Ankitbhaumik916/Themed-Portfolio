@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { GraduationCap, MapPin, Award } from "lucide-react";
+import Image from "next/image";
 import { education, personalInfo } from "@/data/profile";
 import CountUp from "./CountUp";
 
@@ -13,10 +14,10 @@ export default function About() {
   });
 
   const stats = [
-    { label: "CGPA", value: 9.34, suffix: "/10" },
-    { label: "Projects", value: 35, suffix: "+" },
-    { label: "Research Papers", value: 1, suffix: "" },
-    { label: "Achievements", value: 10, suffix: "+" },
+    { label: "CGPA", value: 9, suffix: "/10" },
+    { label: "Projects", value: 15, suffix: "+" },
+    { label: "Research Papers", value: 2, suffix: "" },
+    { label: "Achievements", value: 6, suffix: "+" },
   ];
 
   return (
@@ -54,14 +55,17 @@ export default function About() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="space-y-8"
             >
-              {/* Profile Image Placeholder */}
+              {/* Profile Image */}
               <div className="relative group">
                 <div className="aspect-square rounded-2xl glass-effect overflow-hidden">
-                  <div className="w-full h-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
-                    <div className="text-9xl font-bold text-white opacity-30 font-[family-name:var(--font-orbitron)]">
-                      AB
-                    </div>
-                  </div>
+                  <Image
+                    src="/image.png"
+                    alt="Ankit Bhaumik"
+                    width={400}
+                    height={400}
+                    className="w-full h-full object-cover"
+                    priority
+                  />
                 </div>
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-20 transition-opacity blur-xl" />
               </div>
