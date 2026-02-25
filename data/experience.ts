@@ -6,7 +6,7 @@ export const experiences: Experience[] = [
     title: "Research Project Member",
     company: "BioLens & Al-Mirah Research",
     location: "SRM Institute of Science and Technology, Chennai",
-    period: "Jan 2023 - Present",
+    period: "Jan 2024 - Oct 2025",
     description: "Leading research initiatives in AI-powered health analytics and medical image analysis under the guidance of Dr. C. Amuthadevi.",
     responsibilities: [
       "Developed BioLens, an AI-powered health and fitness tracking system with real-time pose estimation",
@@ -22,7 +22,7 @@ export const experiences: Experience[] = [
     title: "Research Intern",
     company: "Diet Recommendation System Research",
     location: "Under Dr. D. Bhattacharya, SRM IST",
-    period: "Aug 2023 - Dec 2023",
+    period: "Oct 2025 - Feb 2026",
     description: "Research internship focused on developing novel recommendation systems using Neural Collaborative Filtering and Reinforcement Learning with explainable AI components.",
     responsibilities: [
       "Designed and implemented NCF22, a hybrid recommender system combining NCF and RL",
@@ -38,7 +38,7 @@ export const experiences: Experience[] = [
     title: "Data Analyst Intern",
     company: "Amdox Technologies",
     location: "Remote",
-    period: "May 2023 - Jul 2023",
+    period: "Nov 2025 - Feb 2026",
     description: "Worked on data analysis and visualization projects, developing insights from large datasets and creating interactive dashboards for business intelligence.",
     responsibilities: [
       "Analyzed large datasets to identify trends and patterns for business decision-making",

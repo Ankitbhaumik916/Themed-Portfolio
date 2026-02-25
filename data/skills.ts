@@ -14,7 +14,7 @@ export const skills: Skill[] = [
   },
   {
     name: "Java",
-    level: 80,
+    level: 65,
     category: "Languages",
   },
   {
