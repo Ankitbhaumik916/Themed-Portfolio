@@ -13,10 +13,10 @@ export default function About() {
   });
 
   const stats = [
-    { label: "CGPA", value: 9, suffix: "/10" },
-    { label: "Projects", value: 15, suffix: "+" },
-    { label: "Research Papers", value: 2, suffix: "" },
-    { label: "Achievements", value: 6, suffix: "+" },
+    { label: "CGPA", value: 9.34, suffix: "/10" },
+    { label: "Projects", value: 35, suffix: "+" },
+    { label: "Research Papers", value: 1, suffix: "" },
+    { label: "Achievements", value: 10, suffix: "+" },
   ];
 
   return (
