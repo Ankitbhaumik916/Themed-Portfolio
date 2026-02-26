@@ -9,30 +9,40 @@
     "next.js",
     "react-three-fiber"
   ],
-  "main": "src/index.js",
-  "dependencies": {
-    "@pmndrs/branding": "0.0.8",
-    "@react-three/drei": "9.92.7",
-    "@react-three/fiber": "8.15.12",
-    "@react-three/postprocessing": "2.15.11",
-    "@types/three": "0.160.0",
-    "maath": "0.10.7",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-scripts": "5.0.1",
-    "three": "0.160.0"
-  },
-  "devDependencies": {},
+  "private": true,
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "next": "^14.2.3",
+    "typescript": "^5.4.5",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@types/node": "^20.11.19",
+    "framer-motion": "^11.2.10",
+    "react-intersection-observer": "^9.10.0",
+    "react-type-animation": "^3.2.0",
+    "lucide-react": "^0.396.0",
+    "three": "^0.164.1",
+    "@react-three/fiber": "^8.16.8",
+    "@react-three/drei": "^9.106.0",
+    "@types/three": "^0.160.0",
+    "tailwindcss": "^3.4.1",
+    "postcss": "^8.4.35",
+    "autoprefixer": "^10.4.17",
+    "mongoose": "^8.1.0",
+    "nodemailer": "^6.9.7"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
