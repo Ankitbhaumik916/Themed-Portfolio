@@ -1,161 +1,134 @@
 "use client";
 
-import { useRef, useMemo, useState, useEffect } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Sphere, MeshDistortMaterial } from "@react-three/drei";
 import * as THREE from "three";
+import { useLayoutEffect, useRef, useState } from "react";
+import { Canvas, applyProps, useFrame } from "@react-three/fiber";
+import {
+  AccumulativeShadows,
+  Environment,
+  Float,
+  Lightformer,
+  PerformanceMonitor,
+  RandomizedLight,
+  useGLTF,
+} from "@react-three/drei";
 
-function NeuralNode({ position }: { position: [number, number, number] }) {
-  const ref = useRef<THREE.Mesh>(null);
+type CameraRigProps = {
+  v?: THREE.Vector3;
+};
 
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.1;
-    }
-  });
+type LightformersProps = {
+  positions?: number[];
+};
 
-  return (
-    <Sphere ref={ref} position={position} args={[0.1, 16, 16]}>
-      <MeshDistortMaterial
-        color="#3b82f6"
-        attach="material"
-        distort={0.3}
-        speed={2}
-        roughness={0.4}
-      />
-    </Sphere>
-  );
-}
+function Porsche(props: JSX.IntrinsicElements["group"]) {
+  const { scene, nodes, materials } = useGLTF("/911-transformed.glb") as any;
 
-function Connection({ start, end }: { start: [number, number, number]; end: [number, number, number] }) {
-  const points = useMemo(() => {
-    return [new THREE.Vector3(...start), new THREE.Vector3(...end)];
-  }, [start, end]);
-
-  const lineGeometry = useMemo(() => {
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    return geometry;
-  }, [points]);
-
-  return (
-    <primitive object={new THREE.Line(lineGeometry, new THREE.LineBasicMaterial({ color: "#3b82f6", opacity: 0.3, transparent: true }))} />
-  );
-}
-
-function NeuralNetworkMesh() {
-  const groupRef = useRef<THREE.Group>(null);
-
-  // Create network layers
-  const layers = [
-    { nodes: 4, z: -2 },
-    { nodes: 6, z: 0 },
-    { nodes: 5, z: 2 },
-    { nodes: 3, z: 4 },
-  ];
-
-  const nodePositions: [number, number, number][] = [];
-  layers.forEach((layer) => {
-    for (let i = 0; i < layer.nodes; i++) {
-      const x = (i - (layer.nodes - 1) / 2) * 0.8;
-      const y = 0;
-      const z = layer.z;
-      nodePositions.push([x, y, z]);
-    }
-  });
-
-  // Create connections
-  const connections: Array<{ start: [number, number, number]; end: [number, number, number] }> = [];
-  let startIndex = 0;
-  for (let i = 0; i < layers.length - 1; i++) {
-    const currentLayerNodes = layers[i].nodes;
-    const nextLayerNodes = layers[i + 1].nodes;
-    
-    for (let j = 0; j < currentLayerNodes; j++) {
-      for (let k = 0; k < nextLayerNodes; k++) {
-        connections.push({
-          start: nodePositions[startIndex + j],
-          end: nodePositions[startIndex + currentLayerNodes + k],
-        });
+  useLayoutEffect(() => {
+    Object.values(nodes).forEach((node: any) => {
+      if (node?.isMesh) {
+        node.receiveShadow = true;
+        node.castShadow = true;
       }
-    }
-    startIndex += currentLayerNodes;
-  }
+    });
 
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.2;
+    applyProps(materials.rubber, {
+      color: "#1f1f24",
+      roughness: 0.65,
+      roughnessMap: null,
+      normalScale: [3, 3],
+    });
+    applyProps(materials.window, { color: "#101018", roughness: 0.15, clearcoat: 0.2 });
+    applyProps(materials.coat, { envMapIntensity: 3.2, roughness: 0.55, metalness: 1 });
+    applyProps(materials.paint, {
+      envMapIntensity: 2.6,
+      roughness: 0.35,
+      metalness: 0.9,
+      color: "#0b0b10",
+    });
+  }, [nodes, materials]);
+
+  return <primitive object={scene} {...props} />;
+}
+
+function CameraRig({ v = new THREE.Vector3() }: CameraRigProps) {
+  return useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    state.camera.position.lerp(v.set(Math.sin(t / 5), 0, 12 + Math.cos(t / 5) / 2), 0.05);
+    state.camera.lookAt(0, 0, 0);
+  });
+}
+
+function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }: LightformersProps) {
+  const group = useRef<THREE.Group>(null);
+
+  useFrame((_, delta) => {
+    if (!group.current) return;
+    group.current.position.z += delta * 10;
+    if (group.current.position.z > 20) {
+      group.current.position.z = -60;
     }
   });
 
   return (
-    <group ref={groupRef}>
-      {/* Connections */}
-      {connections.map((conn, i) => (
-        <Connection key={`conn-${i}`} start={conn.start} end={conn.end} />
-      ))}
-      
-      {/* Nodes */}
-      {nodePositions.map((pos, i) => (
-        <NeuralNode key={`node-${i}`} position={pos} />
-      ))}
-
-      {/* Central sphere */}
-      <Sphere args={[1, 32, 32]} position={[0, 0, 1]}>
-        <MeshDistortMaterial
-          color="#8b5cf6"
-          attach="material"
-          distort={0.5}
-          speed={3}
-          roughness={0.2}
-          metalness={0.8}
-        />
-      </Sphere>
-    </group>
+    <>
+      <Lightformer intensity={0.75} rotation-x={Math.PI / 2} position={[0, 5, -9]} scale={[10, 10, 1]} />
+      <group rotation={[0, 0.5, 0]}>
+        <group ref={group}>
+          {positions.map((x, i) => (
+            <Lightformer
+              key={i}
+              form="circle"
+              intensity={2}
+              rotation={[Math.PI / 2, 0, 0]}
+              position={[x, 4, i * 4]}
+              scale={[3, 1, 1]}
+            />
+          ))}
+        </group>
+      </group>
+      <Lightformer intensity={4} rotation-y={Math.PI / 2} position={[-5, 1, -1]} scale={[20, 0.1, 1]} />
+      <Lightformer rotation-y={Math.PI / 2} position={[-5, -1, -1]} scale={[20, 0.5, 1]} />
+      <Lightformer rotation-y={-Math.PI / 2} position={[10, 1, 0]} scale={[20, 1, 1]} />
+      <Float speed={5} floatIntensity={2} rotationIntensity={2}>
+        <Lightformer form="ring" color="red" intensity={1} scale={10} position={[-15, 4, -18]} target={[0, 0, 0]} />
+      </Float>
+      <mesh scale={100}>
+        <sphereGeometry args={[1, 64, 64]} />
+        <meshBasicMaterial color="#b6a4be" side={THREE.BackSide} />
+      </mesh>
+    </>
   );
 }
 
 export default function NeuralNetwork3D() {
-  const [webglSupported, setWebglSupported] = useState(true);
-
-  useEffect(() => {
-    try {
-      const canvas = document.createElement("canvas");
-      const gl = canvas.getContext("webgl") || canvas.getContext("webgl2");
-      if (!gl) {
-        setWebglSupported(false);
-      }
-    } catch (e) {
-      setWebglSupported(false);
-    }
-  }, []);
-
-  if (!webglSupported) {
-    return (
-      <div className="w-full h-96 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl flex items-center justify-center border border-purple-500/20">
-        <div className="text-center">
-          <div className="text-4xl mb-4">🧠</div>
-          <p className="text-gray-300">WebGL not supported</p>
-          <p className="text-gray-500 text-sm mt-2">3D visualization unavailable</p>
-        </div>
-      </div>
-    );
-  }
+  const [degraded, degrade] = useState(false);
 
   return (
     <div className="w-full h-full">
-      <Canvas 
-        camera={{ position: [0, 0, 8], fov: 50 }}
-        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      <Canvas
+        shadows
+        camera={{ position: [4.2, 0.3, 12], fov: 32 }}
+        gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
         onCreated={(state) => {
           state.gl.setClearColor(0x000000, 0);
         }}
       >
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1} />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#3b82f6" />
-        <NeuralNetworkMesh />
-        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
+        <spotLight position={[0, 15, 0]} angle={0.3} penumbra={1} castShadow intensity={1.7} shadow-bias={-0.0001} />
+        <ambientLight intensity={0.65} color="#d6c4e3" />
+        <directionalLight position={[6, 6, 6]} intensity={0.7} color="#c7b2de" />
+        <Porsche scale={1.35} position={[-0.3, -0.25, 0]} rotation={[0, Math.PI / 5, 0]} />
+        <AccumulativeShadows position={[0, -1.16, 0]} frames={100} alphaTest={0.9} scale={10}>
+          <RandomizedLight amount={8} radius={10} ambient={0.5} position={[1, 5, -1]} />
+        </AccumulativeShadows>
+        <PerformanceMonitor onDecline={() => degrade(true)} />
+        <Environment frames={degraded ? 1 : Infinity} resolution={256} background={false} blur={1}>
+          <Lightformers />
+        </Environment>
+        <CameraRig />
       </Canvas>
     </div>
   );
 }
+
+useGLTF.preload("/911-transformed.glb");
