@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
-import { Github, Linkedin, Mail, Download, ArrowDown } from "lucide-react";
+import { Github, Linkedin, Mail, Download, ArrowDown, Instagram } from "lucide-react";
 import { personalInfo, socialLinks } from "@/data/profile";
 import dynamic from "next/dynamic";
 
@@ -144,6 +144,7 @@ export default function Hero() {
                   {social.icon === "github" && <Github className="w-6 h-6" />}
                   {social.icon === "linkedin" && <Linkedin className="w-6 h-6" />}
                   {social.icon === "mail" && <Mail className="w-6 h-6" />}
+                  {social.icon === "instagram" && <Instagram className="w-6 h-6" />}
                 </a>
               ))}
             </motion.div>

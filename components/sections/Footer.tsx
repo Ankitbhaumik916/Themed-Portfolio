@@ -1,7 +1,7 @@
 "use client";
 
 import { personalInfo, socialLinks } from "@/data/profile";
-import { Github, Linkedin, Mail, Heart } from "lucide-react";
+import { Github, Linkedin, Mail, Heart, Instagram } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -54,6 +54,7 @@ export default function Footer() {
                   {social.icon === "github" && <Github className="w-5 h-5" />}
                   {social.icon === "linkedin" && <Linkedin className="w-5 h-5" />}
                   {social.icon === "mail" && <Mail className="w-5 h-5" />}
+                  {social.icon === "instagram" && <Instagram className="w-5 h-5" />}
                 </a>
               ))}
             </div>

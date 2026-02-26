@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useState } from "react";
-import { Send, Mail, User, MessageSquare, Loader2, CheckCircle } from "lucide-react";
+import { Send, Mail, User, MessageSquare, Loader2, CheckCircle, Github, Linkedin, Instagram } from "lucide-react";
 import { personalInfo, socialLinks } from "@/data/profile";
 
 interface FormData {
@@ -148,18 +148,35 @@ export default function Contact() {
               <div>
                 <h4 className="font-semibold mb-4">Follow Me</h4>
                 <div className="flex gap-4">
-                  {socialLinks.slice(0, 3).map((social) => (
-                    <a
-                      key={social.name}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-4 glass-effect rounded-lg hover:scale-110 hover:bg-primary/10 transition-all"
-                      aria-label={social.name}
-                    >
-                      <Mail className="w-6 h-6" />
-                    </a>
-                  ))}
+                  {socialLinks.slice(0, 3).map((social) => {
+                    const getIcon = () => {
+                      switch (social.name.toLowerCase()) {
+                        case "github":
+                          return <Github className="w-6 h-6" />;
+                        case "linkedin":
+                          return <Linkedin className="w-6 h-6" />;
+                        case "instagram":
+                          return <Instagram className="w-6 h-6" />;
+                        case "email":
+                          return <Mail className="w-6 h-6" />;
+                        default:
+                          return <Mail className="w-6 h-6" />;
+                      }
+                    };
+
+                    return (
+                      <a
+                        key={social.name}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-4 glass-effect rounded-lg hover:scale-110 hover:bg-primary/10 transition-all"
+                        aria-label={social.name}
+                      >
+                        {getIcon()}
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
             </motion.div>
