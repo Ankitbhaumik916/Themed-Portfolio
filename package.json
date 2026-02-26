@@ -1,11 +1,13 @@
 {
-  "name": "gltfjsx-400kb-drone",
+  "name": "themed-portfolio",
   "version": "1.0.0",
-  "description": "Shows the results of gltfjsx transform compression.",
+  "description": "Themed portfolio with AI-powered features and 3D visualization",
   "keywords": [
-    "bloom",
-    "gltfjsx",
-    "drone"
+    "portfolio",
+    "3d",
+    "ai",
+    "next.js",
+    "react-three-fiber"
   ],
   "main": "src/index.js",
   "dependencies": {
