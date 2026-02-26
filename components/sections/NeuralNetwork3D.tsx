@@ -6,23 +6,64 @@ import { Canvas, applyProps, useFrame } from "@react-three/fiber";
 import {
   AccumulativeShadows,
   Environment,
-  Float,
-  Lightformer,
   PerformanceMonitor,
   RandomizedLight,
   useGLTF,
 } from "@react-three/drei";
 
-type CameraRigProps = {
-  v?: THREE.Vector3;
+type DynamicLightsProps = {
+  rotation: number;
 };
 
-type LightformersProps = {
-  positions?: number[];
-};
+function DynamicLights({ rotation }: DynamicLightsProps) {
+  const keyLightRef = useRef<THREE.DirectionalLight>(null);
+  const rimLightRef = useRef<THREE.PointLight>(null);
+  const lastRotationRef = useRef(0);
 
-function Porsche(props: JSX.IntrinsicElements["group"]) {
-  const { scene, nodes, materials } = useGLTF("/911-transformed.glb") as any;
+  useFrame(() => {
+    // Only update lights if rotation changed significantly
+    if (Math.abs(rotation - lastRotationRef.current) < 0.01) return;
+    lastRotationRef.current = rotation;
+
+    // Update key light position
+    if (keyLightRef.current) {
+      const angle = rotation + Math.PI / 4;
+      keyLightRef.current.position.x = Math.cos(angle) * 8;
+      keyLightRef.current.position.z = Math.sin(angle) * 8;
+    }
+
+    // Update rim light behind the car
+    if (rimLightRef.current) {
+      const angle = rotation + Math.PI;
+      rimLightRef.current.position.x = Math.cos(angle) * 6;
+      rimLightRef.current.position.z = Math.sin(angle) * 3;
+    }
+  });
+
+  return (
+    <>
+      {/* Ambient light for overall illumination */}
+      <ambientLight intensity={0.6} color="#e8dfff" />
+      
+      {/* Key light - dynamically positioned */}
+      <directionalLight ref={keyLightRef} position={[8, 5, 8]} intensity={1.4} color="#ffffff" />
+      
+      {/* Single rim light */}
+      <pointLight ref={rimLightRef} position={[-6, 2, -3]} intensity={1.8} color="#8b5cf6" distance={18} />
+      
+      {/* Fixed top light */}
+      <pointLight position={[0, 8, 0]} intensity={1} color="#ffffff" distance={20} />
+    </>
+  );
+}
+
+function Porsche(props: JSX.IntrinsicElements["group"] & { onRotationChange?: (rotation: number) => void }) {
+  const { scene, nodes, materials } = useGLTF("/911-transformed.glb", true) as any;
+  const groupRef = useRef<THREE.Group>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [rotation, setRotation] = useState(Math.PI / 5);
+  const dragStart = useRef({ x: 0, rotation: Math.PI / 5 });
+  const updateFrameRef = useRef(0);
 
   useLayoutEffect(() => {
     Object.values(nodes).forEach((node: any) => {
@@ -33,99 +74,130 @@ function Porsche(props: JSX.IntrinsicElements["group"]) {
     });
 
     applyProps(materials.rubber, {
-      color: "#1f1f24",
-      roughness: 0.65,
-      roughnessMap: null,
-      normalScale: [3, 3],
+      color: "#1a1a1f",
+      roughness: 0.8,
+      metalness: 0.1,
     });
-    applyProps(materials.window, { color: "#101018", roughness: 0.15, clearcoat: 0.2 });
-    applyProps(materials.coat, { envMapIntensity: 3.2, roughness: 0.55, metalness: 1 });
-    applyProps(materials.paint, {
-      envMapIntensity: 2.6,
-      roughness: 0.35,
+    applyProps(materials.window, { 
+      color: "#050508", 
+      roughness: 0.05, 
+      metalness: 0.1,
+      transmission: 0.9,
+      opacity: 0.25
+    });
+    applyProps(materials.coat, { 
+      roughness: 0.4, 
       metalness: 0.9,
-      color: "#0b0b10",
+      envMapIntensity: 1.2
+    });
+    applyProps(materials.paint, {
+      roughness: 0.2,
+      metalness: 0.95,
+      color: "#2d1b4e",
+      envMapIntensity: 1.5,
+      clearcoat: 1,
+      clearcoatRoughness: 0.1
     });
   }, [nodes, materials]);
 
-  return <primitive object={scene} {...props} />;
-}
-
-function CameraRig({ v = new THREE.Vector3() }: CameraRigProps) {
-  return useFrame((state) => {
-    const t = state.clock.elapsedTime;
-    state.camera.position.lerp(v.set(Math.sin(t / 5), 0, 12 + Math.cos(t / 5) / 2), 0.05);
-    state.camera.lookAt(0, 0, 0);
-  });
-}
-
-function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }: LightformersProps) {
-  const group = useRef<THREE.Group>(null);
-
-  useFrame((_, delta) => {
-    if (!group.current) return;
-    group.current.position.z += delta * 10;
-    if (group.current.position.z > 20) {
-      group.current.position.z = -60;
+  // Smooth rotation interpolation with frame limiting
+  useFrame(({ clock }) => {
+    if (!groupRef.current) return;
+    
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(
+      groupRef.current.rotation.y,
+      rotation,
+      0.12
+    );
+    
+    // Update parent only every 3 frames to reduce re-renders
+    updateFrameRef.current++;
+    if (updateFrameRef.current % 3 === 0) {
+      props.onRotationChange?.(groupRef.current.rotation.y);
     }
   });
 
   return (
-    <>
-      <Lightformer intensity={0.75} rotation-x={Math.PI / 2} position={[0, 5, -9]} scale={[10, 10, 1]} />
-      <group rotation={[0, 0.5, 0]}>
-        <group ref={group}>
-          {positions.map((x, i) => (
-            <Lightformer
-              key={i}
-              form="circle"
-              intensity={2}
-              rotation={[Math.PI / 2, 0, 0]}
-              position={[x, 4, i * 4]}
-              scale={[3, 1, 1]}
-            />
-          ))}
-        </group>
-      </group>
-      <Lightformer intensity={4} rotation-y={Math.PI / 2} position={[-5, 1, -1]} scale={[20, 0.1, 1]} />
-      <Lightformer rotation-y={Math.PI / 2} position={[-5, -1, -1]} scale={[20, 0.5, 1]} />
-      <Lightformer rotation-y={-Math.PI / 2} position={[10, 1, 0]} scale={[20, 1, 1]} />
-      <Float speed={5} floatIntensity={2} rotationIntensity={2}>
-        <Lightformer form="ring" color="red" intensity={1} scale={10} position={[-15, 4, -18]} target={[0, 0, 0]} />
-      </Float>
-      <mesh scale={100}>
-        <sphereGeometry args={[1, 64, 64]} />
-        <meshBasicMaterial color="#b6a4be" side={THREE.BackSide} />
-      </mesh>
-    </>
+    <group
+      ref={groupRef}
+      onPointerDown={(e) => {
+        e.stopPropagation();
+        setIsDragging(true);
+        dragStart.current = { x: e.clientX, rotation };
+        document.body.style.cursor = 'grabbing';
+      }}
+      onPointerMove={(e) => {
+        if (!isDragging) return;
+        e.stopPropagation();
+        const deltaX = e.clientX - dragStart.current.x;
+        setRotation(dragStart.current.rotation + deltaX * 0.01);
+      }}
+      onPointerUp={(e) => {
+        e.stopPropagation();
+        setIsDragging(false);
+        document.body.style.cursor = 'grab';
+      }}
+      onPointerEnter={(e) => {
+        e.stopPropagation();
+        document.body.style.cursor = 'grab';
+      }}
+      onPointerLeave={(e) => {
+        e.stopPropagation();
+        setIsDragging(false);
+        document.body.style.cursor = 'auto';
+      }}
+      scale={props.scale}
+      position={props.position}
+    >
+      <primitive object={scene} />
+    </group>
   );
 }
 
 export default function NeuralNetwork3D() {
   const [degraded, degrade] = useState(false);
+  const [carRotation, setCarRotation] = useState(Math.PI / 5);
 
   return (
     <div className="w-full h-full">
       <Canvas
         shadows
         camera={{ position: [4.2, 0.3, 12], fov: 32 }}
-        gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+        frameloop="always"
+        gl={{ 
+          alpha: true, 
+          antialias: true, 
+          powerPreference: "high-performance",
+          stencil: false,
+          depth: true,
+          precision: "highp"
+        }}
         onCreated={(state) => {
           state.gl.setClearColor(0x000000, 0);
+          state.gl.shadowMap.type = THREE.PCFShadowMap;
+          state.gl.shadowMap.autoUpdate = true;
         }}
+        dpr={[1, degraded ? 1.25 : 2]}
       >
-        <spotLight position={[0, 15, 0]} angle={0.3} penumbra={1} castShadow intensity={1.7} shadow-bias={-0.0001} />
-        <ambientLight intensity={0.65} color="#d6c4e3" />
-        <directionalLight position={[6, 6, 6]} intensity={0.7} color="#c7b2de" />
-        <Porsche scale={1.35} position={[-0.3, -0.25, 0]} rotation={[0, Math.PI / 5, 0]} />
-        <AccumulativeShadows position={[0, -1.16, 0]} frames={100} alphaTest={0.9} scale={10}>
-          <RandomizedLight amount={8} radius={10} ambient={0.5} position={[1, 5, -1]} />
+        <DynamicLights rotation={carRotation} />
+        
+        <Porsche 
+          scale={1.35} 
+          position={[-0.3, -0.25, 0]} 
+          onRotationChange={setCarRotation}
+        />
+        <AccumulativeShadows 
+          position={[0, -1.16, 0]} 
+          frames={degraded ? 40 : 80} 
+          alphaTest={0.9} 
+          scale={10} 
+          opacity={0.7}
+          toneMapped={true}
+        >
+          <RandomizedLight amount={degraded ? 4 : 10} radius={6.5} ambient={0.45} position={[2.5, 5.5, -1.5]} />
         </AccumulativeShadows>
         <PerformanceMonitor onDecline={() => degrade(true)} />
-        <Environment frames={degraded ? 1 : Infinity} resolution={256} background={false} blur={1}>
-          <Lightformers />
-        </Environment>
-        <CameraRig />
+        <Environment preset="city" background={false} />
       </Canvas>
     </div>
   );
