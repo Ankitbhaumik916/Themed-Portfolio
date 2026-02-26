@@ -50,38 +50,42 @@ function Porsche(props: JSX.IntrinsicElements["group"]) {
   const groupRef = useRef<THREE.Group>(null);
 
   useLayoutEffect(() => {
-    Object.values(nodes).forEach((node: any) => {
-      if (node?.isMesh) {
-        node.receiveShadow = true;
-        node.castShadow = true;
-      }
-    });
+    try {
+      Object.values(nodes).forEach((node: any) => {
+        if (node?.isMesh) {
+          node.receiveShadow = true;
+          node.castShadow = true;
+        }
+      });
 
-    applyProps(materials.rubber, {
-      color: "#1a1a1f",
-      roughness: 0.8,
-      metalness: 0.1,
-    });
-    applyProps(materials.window, { 
-      color: "#050508", 
-      roughness: 0.05, 
-      metalness: 0.1,
-      transmission: 0.95,
-      opacity: 0.2
-    });
-    applyProps(materials.coat, { 
-      roughness: 0.35, 
-      metalness: 0.95,
-      envMapIntensity: 1.4
-    });
-    applyProps(materials.paint, {
-      roughness: 0.08,
-      metalness: 0.95,
-      color: "#000000",
-      envMapIntensity: 2.4,
-      clearcoat: 1.4,
-      clearcoatRoughness: 0.03
-    });
+      applyProps(materials.rubber, {
+        color: "#1a1a1f",
+        roughness: 0.8,
+        metalness: 0.1,
+      });
+      applyProps(materials.window, { 
+        color: "#050508", 
+        roughness: 0.05, 
+        metalness: 0.1,
+        transmission: 0.95,
+        opacity: 0.2
+      });
+      applyProps(materials.coat, { 
+        roughness: 0.35, 
+        metalness: 0.95,
+        envMapIntensity: 1.4
+      });
+      applyProps(materials.paint, {
+        roughness: 0.08,
+        metalness: 0.95,
+        color: "#000000",
+        envMapIntensity: 2.4,
+        clearcoat: 1.4,
+        clearcoatRoughness: 0.03
+      });
+    } catch (err) {
+      console.error("Error setting up 3D model:", err);
+    }
   }, [nodes, materials]);
 
   // Continuous smooth auto-rotation - slower speed for premium feel
@@ -103,6 +107,17 @@ function Porsche(props: JSX.IntrinsicElements["group"]) {
 
 export default function NeuralNetwork3D() {
   const [degraded, degrade] = useState(false);
+  const [error, setError] = useState(false);
+
+  if (error) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-lg">
+        <div className="text-center p-8">
+          <p className="text-muted-foreground">3D visualization unavailable</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full">
@@ -119,11 +134,17 @@ export default function NeuralNetwork3D() {
           precision: "highp"
         }}
         onCreated={(state) => {
-          state.gl.setClearColor(0x000000, 0);
-          state.gl.shadowMap.type = THREE.PCFShadowMap;
-          state.gl.shadowMap.autoUpdate = true;
+          try {
+            state.gl.setClearColor(0x000000, 0);
+            state.gl.shadowMap.type = THREE.PCFShadowMap;
+            state.gl.shadowMap.autoUpdate = true;
+          } catch (err) {
+            console.error("WebGL setup error:", err);
+            setError(true);
+          }
         }}
         dpr={[1, degraded ? 1.5 : 2]}
+        onError={() => setError(true)}
       >
         <DynamicLights rotation={0} />
         

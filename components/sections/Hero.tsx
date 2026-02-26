@@ -36,9 +36,11 @@ export default function Hero() {
   };
 
   const handleScrollDown = () => {
-    const aboutSection = document.querySelector("#about");
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: "smooth" });
+    if (typeof window !== 'undefined') {
+      const aboutSection = document.querySelector("#about");
+      if (aboutSection) {
+        aboutSection.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
 
@@ -111,7 +113,9 @@ export default function Hero() {
                 href="#projects"
                 onClick={(e) => {
                   e.preventDefault();
-                  document.querySelector("#projects")?.scrollIntoView({ behavior: "smooth" });
+                  if (typeof window !== 'undefined') {
+                    document.querySelector("#projects")?.scrollIntoView({ behavior: "smooth" });
+                  }
                 }}
                 className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:scale-105 transition-transform shadow-lg hover:shadow-primary/50"
               >
