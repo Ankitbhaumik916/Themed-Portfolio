@@ -46,10 +46,25 @@ function DynamicLights({ rotation }: { rotation: number }) {
 }
 
 function Porsche(props: JSX.IntrinsicElements["group"]) {
-  const { scene, nodes, materials } = useGLTF("/911-transformed.glb", true) as any;
   const groupRef = useRef<THREE.Group>(null);
+  const [loadError, setLoadError] = useState(false);
+  let scene: any = null;
+  let nodes: any = null;
+  let materials: any = null;
+  
+  try {
+    const gltf = useGLTF("/911-transformed.glb", true) as any;
+    scene = gltf.scene;
+    nodes = gltf.nodes;
+    materials = gltf.materials;
+  } catch (err) {
+    console.error("Error loading 3D model:", err);
+    if (!loadError) setLoadError(true);
+  }
 
   useLayoutEffect(() => {
+    if (!nodes || !materials || loadError) return;
+    
     try {
       Object.values(nodes).forEach((node: any) => {
         if (node?.isMesh) {
@@ -58,41 +73,53 @@ function Porsche(props: JSX.IntrinsicElements["group"]) {
         }
       });
 
-      applyProps(materials.rubber, {
-        color: "#1a1a1f",
-        roughness: 0.8,
-        metalness: 0.1,
-      });
-      applyProps(materials.window, { 
-        color: "#050508", 
-        roughness: 0.05, 
-        metalness: 0.1,
-        transmission: 0.95,
-        opacity: 0.2
-      });
-      applyProps(materials.coat, { 
-        roughness: 0.35, 
-        metalness: 0.95,
-        envMapIntensity: 1.4
-      });
-      applyProps(materials.paint, {
-        roughness: 0.08,
-        metalness: 0.95,
-        color: "#000000",
-        envMapIntensity: 2.4,
-        clearcoat: 1.4,
-        clearcoatRoughness: 0.03
-      });
+      if (materials.rubber) {
+        applyProps(materials.rubber, {
+          color: "#1a1a1f",
+          roughness: 0.8,
+          metalness: 0.1,
+        });
+      }
+      if (materials.window) {
+        applyProps(materials.window, { 
+          color: "#050508", 
+          roughness: 0.05, 
+          metalness: 0.1,
+          transmission: 0.95,
+          opacity: 0.2
+        });
+      }
+      if (materials.coat) {
+        applyProps(materials.coat, { 
+          roughness: 0.35, 
+          metalness: 0.95,
+          envMapIntensity: 1.4
+        });
+      }
+      if (materials.paint) {
+        applyProps(materials.paint, {
+          roughness: 0.08,
+          metalness: 0.95,
+          color: "#000000",
+          envMapIntensity: 2.4,
+          clearcoat: 1.4,
+          clearcoatRoughness: 0.03
+        });
+      }
     } catch (err) {
       console.error("Error setting up 3D model:", err);
     }
-  }, [nodes, materials]);
+  }, [nodes, materials, loadError]);
 
   // Continuous smooth auto-rotation - slower speed for premium feel
   useFrame(({ clock }) => {
     if (!groupRef.current) return;
     groupRef.current.rotation.y = clock.getElapsedTime() * 0.15;
   });
+
+  if (loadError || !scene) {
+    return null;
+  }
 
   return (
     <group
@@ -144,7 +171,10 @@ export default function NeuralNetwork3D() {
           }
         }}
         dpr={[1, degraded ? 1.5 : 2]}
-        onError={() => setError(true)}
+        onError={(error) => {
+          console.error("Canvas error:", error);
+          setError(true);
+        }}
       >
         <DynamicLights rotation={0} />
         
