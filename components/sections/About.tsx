@@ -95,14 +95,14 @@ export default function About() {
               initial={{ opacity: 0, x: 50 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="space-y-6"
+              className="space-y-3"
             >
               <p className="text-lg text-muted-foreground leading-relaxed">
                 {personalInfo.bio}
               </p>
 
               {/* Education Timeline */}
-              <div className="space-y-4 mt-8">
+              <div className="space-y-4 mt-2">
                 {education.map((edu, index) => (
                   <motion.div
                     key={index}
