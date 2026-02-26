@@ -6,7 +6,6 @@ import { Github, Linkedin, Mail, Download, ArrowDown, Instagram } from "lucide-r
 import { personalInfo, socialLinks } from "@/data/profile";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
-import ErrorBoundary from "@/components/ui/ErrorBoundary";
 
 const NeuralNetwork3D = dynamic(() => import("./NeuralNetwork3D"), {
   ssr: false,
@@ -163,17 +162,9 @@ export default function Hero() {
             transition={{ duration: 1, delay: 0.5 }}
             className="relative h-[400px] lg:h-[600px] w-full"
           >
-            <ErrorBoundary
-              fallback={
-                <div className="w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-lg flex items-center justify-center">
-                  <p className="text-muted-foreground">3D visualization unavailable</p>
-                </div>
-              }
-            >
-              <Suspense fallback={<div className="w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 animate-pulse rounded-lg" />}>
-                <NeuralNetwork3D />
-              </Suspense>
-            </ErrorBoundary>
+            <Suspense fallback={<div className="w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 animate-pulse rounded-lg" />}>
+              <NeuralNetwork3D />
+            </Suspense>
           </motion.div>
         </div>
       </div>

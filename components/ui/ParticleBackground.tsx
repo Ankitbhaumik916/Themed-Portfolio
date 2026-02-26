@@ -106,18 +106,20 @@ export default function ParticleBackground() {
       animationFrameId = requestAnimationFrame(animate);
     };
 
+    const handleResize = () => {
+      resizeCanvas();
+      init();
+    };
+
     resizeCanvas();
     init();
     animate();
 
-    window.addEventListener("resize", () => {
-      resizeCanvas();
-      init();
-    });
+    window.addEventListener("resize", handleResize);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener("resize", handleResize);
     };
   }, [mounted]);
 
