@@ -17,9 +17,11 @@
    # Optional: Email for contact form notifications
    EMAIL_HOST=smtp.gmail.com
    EMAIL_PORT=587
+   EMAIL_SECURE=false
    EMAIL_USER=your.email@gmail.com
    EMAIL_PASS=your-app-password
    EMAIL_TO=your.email@gmail.com
+   EMAIL_FROM=your.email@gmail.com
 
    # Required: Your site URL
    NEXT_PUBLIC_SITE_URL=http://localhost:3000

@@ -34,10 +34,46 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
+function getClientIp(request: NextRequest): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    return forwarded.split(",")[0].trim();
+  }
+
+  return request.headers.get("x-real-ip") || "unknown";
+}
+
+function getSmtpConfig() {
+  const user = process.env.EMAIL_USER;
+  const pass = process.env.EMAIL_PASS;
+
+  if (!user || !pass) {
+    return null;
+  }
+
+  const host = process.env.EMAIL_HOST || "smtp.gmail.com";
+  const port = Number.parseInt(process.env.EMAIL_PORT || "587", 10);
+  const secureFromEnv = process.env.EMAIL_SECURE;
+  const secure =
+    typeof secureFromEnv === "string"
+      ? secureFromEnv.toLowerCase() === "true"
+      : port === 465;
+
+  return {
+    host,
+    port,
+    secure,
+    auth: {
+      user,
+      pass,
+    },
+  };
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Get client IP for rate limiting
-    const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
+    const ip = getClientIp(request);
 
     // Check rate limit
     if (!checkRateLimit(ip)) {
@@ -71,33 +107,41 @@ export async function POST(request: NextRequest) {
     }
 
     // Send email notification
-    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-      const transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST || "smtp.gmail.com",
-        port: parseInt(process.env.EMAIL_PORT || "587"),
-        secure: false,
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
+    const smtpConfig = getSmtpConfig();
 
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_TO || process.env.EMAIL_USER,
-        subject: `New Contact Form Message from ${validatedData.name}`,
-        html: `
-          <h2>New Contact Form Submission</h2>
-          <p><strong>Name:</strong> ${validatedData.name}</p>
-          <p><strong>Email:</strong> ${validatedData.email}</p>
-          <p><strong>Message:</strong></p>
-          <p>${validatedData.message.replace(/\n/g, "<br>")}</p>
-          <hr>
-          <p><small>Sent from your portfolio website</small></p>
-        `,
-      };
+    if (!smtpConfig) {
+      return NextResponse.json(
+        { error: "Email service is not configured on the server." },
+        { status: 500 }
+      );
+    }
 
+    const transporter = nodemailer.createTransport(smtpConfig);
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || smtpConfig.auth.user,
+      to: process.env.EMAIL_TO || "ankitbhaumik23@gmail.com",
+      replyTo: validatedData.email,
+      subject: `New Contact Form Message from ${validatedData.name}`,
+      html: `
+        <h2>New Contact Form Submission</h2>
+        <p><strong>Name:</strong> ${validatedData.name}</p>
+        <p><strong>Email:</strong> ${validatedData.email}</p>
+        <p><strong>Message:</strong></p>
+        <p>${validatedData.message.replace(/\n/g, "<br>")}</p>
+        <hr>
+        <p><small>Sent from your portfolio website</small></p>
+      `,
+    };
+
+    try {
       await transporter.sendMail(mailOptions);
+    } catch (mailError) {
+      console.error("Email send error:", mailError);
+      return NextResponse.json(
+        { error: "Unable to send email with current SMTP settings." },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json(

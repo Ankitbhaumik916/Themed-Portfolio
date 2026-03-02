@@ -85,9 +85,11 @@ A modern, production-ready portfolio website built with Next.js 14, TypeScript, 
    # Email Configuration (optional)
    EMAIL_HOST=smtp.gmail.com
    EMAIL_PORT=587
+   EMAIL_SECURE=false
    EMAIL_USER=your_email@gmail.com
    EMAIL_PASS=your_app_specific_password
    EMAIL_TO=your_email@gmail.com
+   EMAIL_FROM=your_email@gmail.com
 
    # Site Configuration
    NEXT_PUBLIC_SITE_URL=http://localhost:3000

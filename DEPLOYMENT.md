@@ -98,9 +98,11 @@ If you want to store contact form submissions:
    MONGODB_URI=your_mongodb_connection_string
    EMAIL_HOST=smtp.gmail.com
    EMAIL_PORT=587
+   EMAIL_SECURE=false
    EMAIL_USER=your_email@gmail.com
    EMAIL_PASS=your_app_password
    EMAIL_TO=your_email@gmail.com
+   EMAIL_FROM=your_email@gmail.com
    NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
    ```
 

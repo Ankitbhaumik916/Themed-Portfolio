@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/navigation/Navbar";
 import CustomCursor from "@/components/ui/CustomCursor";
 import ScrollProgress from "@/components/ui/ScrollProgress";
-import ParticleBackground from "@/components/ui/ParticleBackground";
+import { ShaderAnimation } from "@/components/ui/shader-animation";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -56,7 +56,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange={false}
         >
-          <ParticleBackground />
+          <div className="fixed inset-0 z-0 pointer-events-none">
+            <ShaderAnimation />
+          </div>
           <CustomCursor />
           <ScrollProgress />
           <Navbar />
