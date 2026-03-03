@@ -22,7 +22,7 @@ export default function About() {
 
   return (
     <section id="about" className="py-20 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 50 }}
@@ -35,7 +35,7 @@ export default function About() {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-4xl md:text-5xl font-bold mb-4 font-[family-name:var(--font-orbitron)]"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 font-[family-name:var(--font-orbitron)]"
             >
               About <span className="text-gradient">Me</span>
             </motion.h2>
@@ -47,7 +47,7 @@ export default function About() {
             />
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             {/* Left: Image and Stats */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}

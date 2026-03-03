@@ -66,7 +66,7 @@ export default function Contact() {
 
   return (
     <section id="contact" className="py-20 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 50 }}
@@ -79,7 +79,7 @@ export default function Contact() {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-4xl md:text-5xl font-bold mb-4 font-[family-name:var(--font-orbitron)]"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 font-[family-name:var(--font-orbitron)]"
             >
               Get In <span className="text-gradient">Touch</span>
             </motion.h2>
@@ -93,13 +93,13 @@ export default function Contact() {
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="mt-4 text-muted-foreground max-w-2xl mx-auto"
+              className="mt-4 text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base"
             >
               Have a project in mind or want to collaborate? Feel free to reach out!
             </motion.p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 max-w-6xl mx-auto">
             {/* Contact Info */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}

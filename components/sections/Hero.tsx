@@ -53,8 +53,8 @@ export default function Hero() {
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20 dark:from-blue-900/30 dark:via-purple-900/30 dark:to-pink-900/30" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-4rem)]">
+      <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center min-h-[calc(100vh-4rem)]">
           {/* Left Content */}
           <motion.div
             variants={containerVariants}
@@ -72,13 +72,13 @@ export default function Hero() {
             {/* Name with gradient */}
             <motion.h1
               variants={itemVariants}
-              className="text-5xl md:text-7xl font-bold font-[family-name:var(--font-orbitron)]"
+              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-[family-name:var(--font-orbitron)]"
             >
               <span className="text-gradient">{personalInfo.name}</span>
             </motion.h1>
 
             {/* Typing animation */}
-            <motion.div variants={itemVariants} className="text-2xl md:text-3xl font-medium h-20">
+            <motion.div variants={itemVariants} className="text-xl sm:text-2xl md:text-3xl font-medium h-20">
               <TypeAnimation
                 sequence={[
                   "AI Engineer",
@@ -100,7 +100,7 @@ export default function Hero() {
             {/* Description */}
             <motion.p
               variants={itemVariants}
-              className="text-lg text-muted-foreground max-w-2xl"
+              className="text-base sm:text-lg text-muted-foreground max-w-2xl"
             >
               {personalInfo.bio.slice(0, 200)}...
             </motion.p>

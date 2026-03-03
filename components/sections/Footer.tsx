@@ -6,8 +6,8 @@ import { Github, Linkedin, Mail, Heart, Instagram } from "lucide-react";
 export default function Footer() {
   return (
     <footer className="relative py-12 border-t border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-3 gap-8 mb-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mb-8">
           {/* Brand */}
           <div>
             <h3 className="text-2xl font-bold mb-4 font-[family-name:var(--font-orbitron)]">

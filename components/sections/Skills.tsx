@@ -19,7 +19,7 @@ export default function Skills() {
 
   return (
     <section id="skills" className="py-20 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 50 }}
@@ -32,7 +32,7 @@ export default function Skills() {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-4xl md:text-5xl font-bold mb-4 font-[family-name:var(--font-orbitron)]"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 font-[family-name:var(--font-orbitron)]"
             >
               Skills & <span className="text-gradient">Expertise</span>
             </motion.h2>
@@ -77,7 +77,7 @@ export default function Skills() {
           </motion.div>
 
           {/* Skills Grid */}
-          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto">
             {filteredSkills.map((skill, index) => (
               <motion.div
                 key={skill.name}
